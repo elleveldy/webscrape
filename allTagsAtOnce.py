@@ -1,10 +1,21 @@
 import requests
 from bs4 import BeautifulSoup
 
-page = requests.get("http://dataquestio.github.io/web-scraping-pages/simple.html")
+page = requests.get("http://www.betmma.tips/free_ufc_betting_tips.php?Event=233")
 
 soup = BeautifulSoup(page.content, 'html.parser')
 
-paragraphs = soup.find_all('p')[0].get_text(-)
+# oddsTables = soup.find_all('td', {'width': '50%'})
+oddsTables = soup.find_all('td', {'width': '50%'})
 
-print(paragraphs)
+for table in oddsTables:
+	print("\n\n**********************************")
+	print(table)
+	print("**********************************\n\n")
+
+
+
+
+
+
+# print(oddsTables)
