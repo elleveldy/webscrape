@@ -15,12 +15,18 @@ class fighterToWin():
 		self.oddsDictionary = self.makeFighterOddsDictionary()
 
 	def makeFighterOddsDictionary(self):
-		currentElement = self.fight
-		test = currentElement.get_text().split("<br><br>")
+		#Raw untabbed html code for the "Straight pick" 
+		rawTextTable = str(self.fight).split("<br><br>")[0]
 		oddsDictionary = dict()
-		for item in test:
-			print(item)
-		
+
+		currentElement = BeautifulSoup(rawTextTable, 'html.parser')
+
+		while currentElement:
+			currentElement = currentElement.a
+			if(currentElement.get_text() not in oddsDictionary and "straight" not in str(currentElement.next_sibling)):
+				oddsDictionary[currentElement.get_text()] =  str(currentElement.next_sibling).split('@')
+			currentElement = currentElement.next_sibling
+			currentElement = currentElement.next_sibling
 		return oddsDictionary
 
 	def printFighterOdds(self):
@@ -33,7 +39,6 @@ class fighterToWin():
 			oddslist.append(float(i[1]))
 		return sum(oddslist) / float(len(oddslist))
 
-# odds = makeFighterOddsDictionary(fight)
 
 
 # print(averageAcceptableOdds(odds))
@@ -42,5 +47,4 @@ soup = BeautifulSoup(page.content, 'html.parser')
 oddsTables = soup.find_all('td', {'width': '50%'})
 
 fight3 = fighterToWin(oddsTables[2])
-print(fight3.fightName + ": " + str(fight3.averageAcceptableOdds()))
-fight3.printFighterOdds()
+odds = fight3.makeFighterOddsDictionary()
