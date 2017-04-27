@@ -38,16 +38,27 @@ class handicapperNextFightPicks():
 	def propsAndParlays(self):
 		propsAndParlays = self.picks.parent.find_all('table')[1]
 		tables = propsAndParlays.find_all('table')
-		for table in tables:
-			trs = table.find_all('tr')
-			print "\n"
-			#Skip the first tr in every table (no valuable information)
-			for tr in range(1, len(trs)):
-				print trs[tr]
 
+		picks = []
+
+		for table in tables:
+			pick = []
+			trs = table.find_all('tr')
+			for tr in range(1, len(trs)):
+				tds = trs[tr].find_all('td')
+				if "Parlay" in trs[tr].get_text():
+					pick.append("Parlay Odds:" + str(tds[3].get_text()))
+				else:
+					for td in range(0, len(tds)):
+						pick.append(tds[td].get_text())
+			
+			picks.append(pick)
+
+		for pi in picks:
+			print pi
 
 		return
-# print(averageAcceptableOdds(odds))
+
 
 
 picks = handicapperNextFightPicks("http://www.betmma.tips/mma_handicapper.php?ID=117226")
