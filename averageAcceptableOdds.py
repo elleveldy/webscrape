@@ -11,12 +11,14 @@ class fighterToWin():
 
 		self.fight = fightHtmlTable
 		self.fightName = self.fight.find('em').get_text()
-		self.handicapperOddsList = self.fight.find('a')
 		self.oddsDictionary = self.makeFighterOddsDictionary()
 
 	def makeFighterOddsDictionary(self):
-		currentElement = self.fight
+		#Raw untabbed html code for the "Straight pick" 
+		rawTextTable = str(self.fight).split("<br><br>")[0]
 		oddsDictionary = dict()
+
+		currentElement = BeautifulSoup(rawTextTable, 'html.parser')
 
 		while currentElement:
 			currentElement = currentElement.a
@@ -36,22 +38,11 @@ class fighterToWin():
 			oddslist.append(float(i[1]))
 		return sum(oddslist) / float(len(oddslist))
 
-# odds = makeFighterOddsDictionary(fight)
-
-
 # print(averageAcceptableOdds(odds))
 page = requests.get("http://www.betmma.tips/free_ufc_betting_tips.php?Event=233")
 soup = BeautifulSoup(page.content, 'html.parser')
 oddsTables = soup.find_all('td', {'width': '50%'})
 
-fight1 = fighterToWin(oddsTables[0])
-print(fight1.fightName + ": " + str(fight1.averageAcceptableOdds()))
-
-fight2 = fighterToWin(oddsTables[1])
-print(fight2.fightName + ": " + str(fight2.averageAcceptableOdds()))
-
 fight3 = fighterToWin(oddsTables[2])
-print(fight3.fightName + ": " + str(fight3.averageAcceptableOdds()))
-
-fight4 = fighterToWin(oddsTables[3])
-print(fight4.fightName + ": " + str(fight4.averageAcceptableOdds()))
+# fight3.printFighterOdds()
+print(fight3.averageAcceptableOdds())
