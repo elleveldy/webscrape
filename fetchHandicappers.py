@@ -19,11 +19,26 @@ def generateHandicapperList():
 		nameTag = person.find('a', href = re.compile(r'http://www.betmma.tips.*?'))
 		handict = {"name": nameTag.get_text(), "url":nameTag.get('href')}
 
+		#the stats are in the sibling tags of the <a>Handicapper</a> tag
 		statTags = nameTag.parent.find_next_siblings()
+		
+		#If there are available picks, add the nr of them
+		availablePicks = statTags[0].find('img')
+		if(availablePicks):
+			handict["AvailablePicks"] = float(availablePicks.get('title').split(' ')[3])
+		else:
+			handict["AvailablePicks"] = 0
+		handict["nrPicks"] = float(statTags[1].get_text().replace(",", ""))
+		handict["UnitsBet"] = float(statTags[2].get_text().replace(",", ""))
+		handict["UnitsProfit"] = float(statTags[3].get_text().replace(",", ""))
+		handict["ROI"] = float(statTags[4].get_text().replace(",", "").split('%')[0])
+		handict["StraightPickUnitsBet"] = float(statTags[5].get_text().replace(",", ""))
+		handict["StraightPickUnitsProfit"] = float(statTags[6].get_text().replace(",", ""))
+		handict["StraightPickROI"] = float(statTags[7].get_text().replace(",", "").split('%')[0])
+		handict["PropParlayUnitsBet"] = float(statTags[8].get_text().replace(",", ""))
+		handict["PropParlayUnitsProfit"] = float(statTags[9].get_text().replace(",", ""))
+		handict["PropParlayROI"] = float(statTags[10].get_text().replace(",", "").split('%')[0])
 
-		for i in range(1, len(statTags)):
-			statsList.append(statTags[i].get_text())
-		handict["stats"] = statsList
 
 		handicapperList.append(handict)
 
@@ -31,18 +46,17 @@ def generateHandicapperList():
 	return handicapperList
 
 
+#(lowest acceptable nr of picks, lowest acceptable ROI)
+def extractBestHandicappers(list, nrPicks, ROI): 
+	goodHandicappers = []
+	for handicapper in list:
+		if handicapper["ROI"] > ROI and handicapper["nrPicks"] > nrPicks:
+			goodHandicappers.append(handicapper)
+
+	print goodHandicappers
+
+
+
 handicapperList = generateHandicapperList()
 
-
-
-# Picks = stats.[1]
-# Units Bet = stats.[2]
-# Units Profit = stats.[3]
-# ROI = stats.[4]
-# Straight Pick Units Bet = stats.[5]
-# Straight Pick Units profit = stats.[6]
-# Straight Pick ROI = stats.[7]
-# Prop&Parlay Units bet = stats.[8]
-# Prop&Parlay Units profit = stats.[9]
-# Prop&Parlay ROI = stats.[10] 
-
+best = extractBestHandicappers(handicapperList, 100, 30)
