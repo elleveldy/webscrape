@@ -1,4 +1,12 @@
 from colorama import Fore, Back, Style	#colored printing
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
+
+def printPretty(string):
+	print(Fore.CYAN)
+	pp.pprint(string)
+	print(Style.RESET_ALL)
+
 def printError(string):
 	print(Fore.RED)
 	print(string)
